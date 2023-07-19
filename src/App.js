@@ -10,11 +10,18 @@ export default function App() {
 	function deleteHandler(id) {
 		setItems((items) => items.filter((item) => item.id !== id));
 	}
+	function toggleHandler(id) {
+		setItems((items) =>
+			items.map((item) =>
+				item.id === id ? { ...item, done: !item.done } : item
+			)
+		);
+	}
 
 	return (
 		<div className="App">
 			<Form onAdd={addHandler} />
-			<List items={items} onDelete={deleteHandler} />
+			<List items={items} onDelete={deleteHandler} onChecked={toggleHandler} />
 		</div>
 	);
 }
@@ -52,13 +59,18 @@ const Form = ({ onAdd }) => {
 		</form>
 	);
 };
-function List({ items, onDelete }) {
+function List({ items, onDelete, onChecked }) {
 	return (
 		<div className="list">
 			<ul>
 				{items.map((item) => (
 					<li>
-						<span style={item.packed ? { textDecoration: 'line-through' } : {}}>
+						<input
+							type="checkbox"
+							value={items.done}
+							onChange={() => onChecked(item.id)}
+						/>
+						<span style={item.done ? { textDecoration: 'line-through' } : {}}>
 							{item.quantity} {item.description}
 						</span>
 						<button onClick={() => onDelete(item.id)}>❌</button>
